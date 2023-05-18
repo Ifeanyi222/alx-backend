@@ -23,22 +23,22 @@ class FIFOCache(BaseCaching):
     def __init__(self):
         
         super().__init__()
+        self.queue = []
 
     def put(self, key, item):
         
-        if key is None or item is None:
-            pass
-        else:
-            if len(self.cache_data) >= BaseCaching.MAX_ITEMS \
-                    and key not in self.cache_data.keys():
-                first_key = next(iter(self.cache_data.keys()))
-                del self.cache_data[first_key]
-                print("DISCARD: {}". format(first_key))
-
+        if key and item:
+            if key in self.cache_data:
+                self.queue.remove(key)
+            elif len(self.cache_data) >= self.MAX_ITEMS:
+                discard = self.queue.pop(0)
+                del self.cache_data[discard]
+                print("DISCARD: {}".format(discard))
+            self.queue.append(key)
             self.cache_data[key] = item
 
     def get(self, key):
         
-        if key is None or key not in self.cache_data.keys():
-            return None
-        return self.cache_data.get(key)
+        if key in self.cache_data:
+            return self.cache_data[key]
+        return None
