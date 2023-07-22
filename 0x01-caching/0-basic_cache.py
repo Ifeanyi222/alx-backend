@@ -1,29 +1,34 @@
-#!/usr/bin/python3
-"""Create a class BasicCache that inherits from BaseCaching 
-and is a caching system:
-You must use self.cache_data - dictionary from the parent class BaseCaching
-This caching system doesn’t have limit
-def put(self, key, item):
+#!/usr/bin/env python3
+"""Module class for a basic dictionary.
 """
 
-BaseCaching = __import__('base_caching').BaseCaching
+from base_caching import BaseCaching
 
 
 class BasicCache(BaseCaching):
+    """BasicCache class
 
-    def __init__(self):
-    
-        super().__init__()
+    """
 
     def put(self, key, item):
-    
-        if key is None or item is None:
-            pass
-        else:
+        """Puts an item in the cache
+
+        Args:
+            key (Any): Key to store the data.
+            item (Any): Item to be stored.
+        """
+        if key and item:
             self.cache_data[key] = item
 
     def get(self, key):
-    
-        if key is None or key not in self.cache_data.keys():
-            return None
-        return self.cache_data.get(key)
+        """Gets item at a key
+
+        Args:
+            key (Any): Key to search.
+
+        Returns:
+            Any: The item stored at a key.
+        """
+        if key and key in self.cache_data:
+            return self.cache_data.get(key)
+        return None

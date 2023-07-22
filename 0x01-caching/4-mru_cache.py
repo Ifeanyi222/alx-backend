@@ -1,38 +1,39 @@
-#!/usr/bin/python3
-"""Create a class MRUCache that inherits from BaseCaching and is a caching system:
-You must use self.cache_data - dictionary from the parent class BaseCaching
-You can overload def __init__(self): but don’t forget to call the parent init: 
-super().__init__()
-def put(self, key, item):
+#!/usr/bin/env python3
+"""MRU Caching policy
 """
 
-BaseCaching = __import__('base_caching').BaseCaching
+
+from base_caching import BaseCaching
+from datetime import datetime
 
 
 class MRUCache(BaseCaching):
+    """MRUCache class
+     """
 
     def __init__(self):
-
+        """Initializes the class
+        """
         super().__init__()
-        self.usedKeys = []
+        self.cache_keys = {}
 
     def put(self, key, item):
-        
-        if key is not None and item is not None:
+        """Puts an item in the cache
+
+        Args:
+            key (Any): Key to be stored in.
+            item (Any): Item to be stored.
+        """
+        if key and item:
             self.cache_data[key] = item
-            if key not in self.usedKeys:
-                self.usedKeys.append(key)
-            else:
-                self.usedKeys.append(
-                    self.usedKeys.pop(self.usedKeys.index(key)))
-            if len(self.usedKeys) > BaseCaching.MAX_ITEMS:
-                discard = self.usedKeys.pop(-2)
-                del self.cache_data[discard]
-                print('DISCARD: {:s}'.format(discard))
+            self.cache_keys[key] = datetime.now()
+            if len(self.cache_keys) > BaseCaching.MAX_ITEMS:
+                lru_sort = sorted(self.cache_keys.items(), key=lambda x: x[1])
+                lru_value = lru_sort[-2]
+                popped_key = lru_value[0]
+                del self.cache_keys[popped_key]
+                del self.cache_data[popped_key]
+                print("DISCARD: {}".format(popped_key))
 
     def get(self, key):
-        
-        if key is not None and key in self.cache_data.keys():
-            self.usedKeys.append(self.usedKeys.pop(self.usedKeys.index(key)))
-            return self.cache_data.get(key)
-        return None
+        """Gets item associated with a key
